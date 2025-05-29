@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface AuthLayoutProps {
   children: React.ReactNode;
   title: string;
@@ -26,12 +28,15 @@ export default function AuthLayout({
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          Rafsakaos Konveksi
+          <Link href="/" className="text-white">
+            Rafsakaos Konveksi
+          </Link>
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Experience excellence in custom clothing with our trusted konveksi service.&rdquo;
+              &ldquo;Experience excellence in custom clothing with our trusted
+              konveksi service.&rdquo;
             </p>
             <footer className="text-sm">Rafsakaos Team</footer>
           </blockquote>
