@@ -4,6 +4,7 @@ import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
 import {
   Select,
@@ -13,8 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import Image from "next/image"
-import { Package } from "lucide-react"
+import { Package, CreditCard } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useRouter } from "next/navigation"
 
 interface Order {
   id: string
@@ -81,13 +83,15 @@ function LoadingSkeleton() {
   )
 }
 
-export function OrdersDataTable({ 
-  orders, 
+export function OrdersDataTable({
+  orders,
   isLoading,
   isAdmin,
   onStatusChange,
   showActions
 }: OrdersDataTableProps) {
+  const router = useRouter();
+
   const baseColumns: ColumnDef<Order>[] = [
     {
       accessorKey: "id",
@@ -172,7 +176,7 @@ export function OrdersDataTable({
       accessorKey: "status",
       header: "Status",
       cell: ({ row }: { row: Row<Order> }) => (
-        <div className="space-y-1">
+        <div className="space-y-2">
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${
               statusColors[row.original.status]
@@ -184,6 +188,17 @@ export function OrdersDataTable({
             <p className="text-xs text-muted-foreground whitespace-nowrap">
               Est. {row.original.estimated_completion_days} days
             </p>
+          )}
+          {/* Payment button for pending orders (customer view only) */}
+          {!isAdmin && row.original.status === "menunggu_pembayaran" && (
+            <Button
+              size="sm"
+              className="w-full"
+              onClick={() => router.push(`/customer/orders/${row.original.id}/payment`)}
+            >
+              <CreditCard className="mr-1 h-3 w-3" />
+              Pay Now
+            </Button>
           )}
         </div>
       ),

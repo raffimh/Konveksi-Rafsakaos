@@ -184,18 +184,22 @@ export default function NewOrderPage() {
       }
 
       // Create order
-      const { error: orderError } = await supabase.from("orders").insert({
-        customer_id: user.id,
-        material: values.material,
-        quantity: values.quantity,
-        design_url: urlData.publicUrl,
-        design_description: values.design_description,
-        total_amount: totalAmount,
-        unique_code: uniqueCode,
-        estimated_completion_days: estimatedDays,
-        status: "menunggu_pembayaran",
-        is_paid: false,
-      });
+      const { data: orderData, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          customer_id: user.id,
+          material: values.material,
+          quantity: values.quantity,
+          design_url: urlData.publicUrl,
+          design_description: values.design_description,
+          total_amount: totalAmount,
+          unique_code: uniqueCode,
+          estimated_completion_days: estimatedDays,
+          status: "menunggu_pembayaran",
+          is_paid: false,
+        })
+        .select()
+        .single();
 
       if (orderError) {
         console.error("Order creation error:", orderError);
@@ -206,8 +210,10 @@ export default function NewOrderPage() {
         return;
       }
 
-      toast.success("Order created successfully", { id: toastId });
-      router.push("/customer/orders");
+      toast.success("Order created successfully! Redirecting to payment...", { id: toastId });
+      
+      // Redirect to payment page
+      router.push(`/customer/orders/${orderData.id}/payment`);
     } catch (error) {
       console.error("Unexpected error:", error);
       toast.error("An unexpected error occurred");
