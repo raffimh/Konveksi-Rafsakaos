@@ -34,7 +34,6 @@ export async function getActiveOrdersCount(
   supabase: SupabaseClient<Database>
 ): Promise<number> {
   // Get all orders that are still in processing (not completed)
-  // Count all orders across all customers that haven't reached 'selesai' status
   const { data: orders } = await supabase
     .from("orders")
     .select("status")
