@@ -101,7 +101,7 @@ export default function NewOrderPage() {
         } = await supabase.auth.getUser();
         if (!user) throw new Error("Not authenticated");
 
-        const activeOrders = await getActiveOrdersCount(supabase, user.id);
+        const activeOrders = await getActiveOrdersCount(supabase);
         const estimate = estimateProductionTime({
           newOrderQuantity: quantity,
           activeOrdersCount: activeOrders,
