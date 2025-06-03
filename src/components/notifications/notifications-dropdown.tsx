@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell } from "lucide-react";
+import { Bell, Check, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,6 +44,7 @@ export function NotificationsDropdown() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const supabase = createClient();
 
   // Format message to highlight status
@@ -144,55 +153,161 @@ export function NotificationsDropdown() {
     }
   };
 
+  // Mark all notifications as read
+  const handleMarkAllAsRead = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
+
+      if (error) throw error;
+
+      setUnreadCount(0);
+      setNotifications(prev =>
+        prev.map(n => ({ ...n, is_read: true }))
+      );
+      
+      toast.success('All notifications marked as read');
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+      toast.error('Failed to mark all notifications as read');
+    }
+  };
+
+  // Delete all notifications
+  const handleDeleteAll = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setNotifications([]);
+      setUnreadCount(0);
+      setShowDeleteDialog(false);
+      
+      toast.success('All notifications deleted');
+    } catch (error) {
+      console.error('Error deleting all notifications:', error);
+      toast.error('Failed to delete all notifications');
+    }
+  };
+
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          {unreadCount > 0 && (
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-            >
-              {unreadCount}
-            </Badge>
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80" align="end">
-        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <ScrollArea className="h-[400px]">
-          {notifications.length === 0 ? (
-            <div className="text-center py-4 text-sm text-muted-foreground">
-              No notifications
-            </div>
-          ) : (
-            notifications.map((notification) => (
-              <DropdownMenuItem
-                key={notification.id}
-                onSelect={() => handleNotificationClick(notification)}
-                className="flex flex-col items-start gap-1 p-4 cursor-pointer"
+    <>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="relative">
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
               >
-                <div className="flex items-center gap-2 w-full">
-                  <span className="font-medium flex-1">{notification.title}</span>
-                  {!notification.is_read && (
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                      New
-                    </Badge>
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {formatMessage(notification.message)}
-                </p>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(notification.created_at).toLocaleString()}
-                </span>
-              </DropdownMenuItem>
-            ))
-          )}
-        </ScrollArea>
-      </DropdownMenuContent>
-    </DropdownMenu>
+                {unreadCount}
+              </Badge>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-80" align="end">
+          <DropdownMenuLabel className="flex items-center justify-between">
+            <span>Notifications</span>
+            {notifications.length > 0 && (
+              <div className="flex gap-1">
+                {unreadCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleMarkAllAsRead}
+                    className="h-6 px-2 text-xs"
+                    title="Mark all as read"
+                  >
+                    <Check className="h-3 w-3 mr-1" />
+                    Read All
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                  title="Delete all notifications"
+                >
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  Delete All
+                </Button>
+              </div>
+            )}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <ScrollArea className="h-[400px]">
+            {notifications.length === 0 ? (
+              <div className="text-center py-4 text-sm text-muted-foreground">
+                No notifications
+              </div>
+            ) : (
+              notifications.map((notification) => (
+                <DropdownMenuItem
+                  key={notification.id}
+                  onSelect={() => handleNotificationClick(notification)}
+                  className="flex flex-col items-start gap-1 p-4 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <span className="font-medium flex-1">{notification.title}</span>
+                    {!notification.is_read && (
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                        New
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {formatMessage(notification.message)}
+                  </p>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(notification.created_at).toLocaleString()}
+                  </span>
+                </DropdownMenuItem>
+              ))
+            )}
+          </ScrollArea>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete All Notifications</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete all notifications? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAll}
+            >
+              Delete All
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
