@@ -7,5 +7,5 @@ export default function CustomerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+  return <DashboardLayout isAdmin={false}>{children}</DashboardLayout>;
 }

@@ -4,14 +4,14 @@ import { RegisterForm } from "@/components/auth/register-form";
 
 export const metadata: Metadata = {
   title: "Create Account - Rafsakaos Konveksi",
-  description: "Create an account to get started",
+  description: "Join Rafsakaos and start creating amazing custom clothing",
 };
 
 export default function RegisterPage() {
   return (
     <AuthLayout
-      title="Create an account"
-      description="Enter your information to create an account"
+      title="Join the Rafsakaos Family"
+      description="Create your account and start your custom clothing journey today"
     >
       <RegisterForm />
     </AuthLayout>

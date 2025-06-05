@@ -1,5 +1,7 @@
 # Konveksi Rafsakaos Management System
 
+![Screenshot](screenshot.png)
+
 A modern web application for managing clothing production orders built with Next.js 15 and Supabase.
 
 ## Features
@@ -27,7 +29,6 @@ A modern web application for managing clothing production orders built with Next
 - **State Management:** React Hooks
 - **Form Handling:** React Hook Form, Zod
 - **Styling:** TailwindCSS, CSS Modules
-- **Mobile:** Flutter implementation available
 
 ## Getting Started
 
@@ -42,8 +43,8 @@ A modern web application for managing clothing production orders built with Next
 1. Clone the repository
 
 ```bash
-git clone https://github.com/raffimh/Konveksi-Rafsakaos.git
-cd Konveksi-Rafsakaos
+git clone https://github.com/raffimh/Konveksi-RafsakaosV2.git
+cd Konveksi-RafsakaosV2
 ```
 
 2. Install dependencies

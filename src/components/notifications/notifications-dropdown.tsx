@@ -34,10 +34,10 @@ interface Notification {
 
 // Status colors mapping
 const statusColors = {
-  'Menunggu Pembayaran': 'text-yellow-600',
-  'Diproses': 'text-blue-600',
-  'Dalam Produksi': 'text-purple-600',
-  'Selesai': 'text-green-600'
+  "Menunggu Pembayaran": "text-yellow-600",
+  Diproses: "text-blue-600",
+  "Dalam Produksi": "text-purple-600",
+  Selesai: "text-green-600",
 };
 
 export function NotificationsDropdown() {
@@ -45,21 +45,29 @@ export function NotificationsDropdown() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isMarkingRead, setIsMarkingRead] = useState(false);
   const supabase = createClient();
 
   // Format message to highlight status
   const formatMessage = (message: string) => {
     // Find status text in the message
-    const statusMatch = message.match(/(Menunggu Pembayaran|Diproses|Dalam Produksi|Selesai)/);
+    const statusMatch = message.match(
+      /(Menunggu Pembayaran|Diproses|Dalam Produksi|Selesai)/
+    );
     if (!statusMatch) return message;
 
     const status = statusMatch[0];
     const parts = message.split(status);
-    
+
     return (
       <>
         {parts[0]}
-        <span className={`font-medium ${statusColors[status as keyof typeof statusColors]}`}>
+        <span
+          className={`font-medium ${
+            statusColors[status as keyof typeof statusColors]
+          }`}
+        >
           {status}
         </span>
         {parts[1]}
@@ -69,43 +77,52 @@ export function NotificationsDropdown() {
 
   // Load initial notifications and setup realtime subscription
   useEffect(() => {
+    let mounted = true;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
     async function initialize() {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user || !mounted) return;
 
         // Get initial notifications
-        const { data: initialNotifications, error: notificationsError } = await supabase
-          .from('notifications')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(20);
+        const { data: initialNotifications, error: notificationsError } =
+          await supabase
+            .from("notifications")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(20);
 
         if (notificationsError) throw notificationsError;
 
-        if (initialNotifications) {
+        if (initialNotifications && mounted) {
           setNotifications(initialNotifications);
-          const unreadCount = initialNotifications.filter(n => !n.is_read).length;
+          const unreadCount = initialNotifications.filter(
+            n => !n.is_read
+          ).length;
           setUnreadCount(unreadCount);
         }
 
         // Setup realtime subscription
-        const channel = supabase
-          .channel('public:notifications')
+        channel = supabase
+          .channel(`notifications_${user.id}`)
           .on(
-            'postgres_changes',
+            "postgres_changes",
             {
-              event: 'INSERT',
-              schema: 'public',
-              table: 'notifications',
+              event: "INSERT",
+              schema: "public",
+              table: "notifications",
               filter: `user_id=eq.${user.id}`,
             },
-            (payload) => {
+            payload => {
+              if (!mounted) return;
               const newNotification = payload.new as Notification;
               setNotifications(prev => [newNotification, ...prev]);
               setUnreadCount(prev => prev + 1);
-              
+
               // Show toast notification
               toast(newNotification.title, {
                 description: (
@@ -116,18 +133,59 @@ export function NotificationsDropdown() {
               });
             }
           )
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "notifications",
+              filter: `user_id=eq.${user.id}`,
+            },
+            payload => {
+              if (!mounted) return;
+              const updatedNotification = payload.new as Notification;
+              setNotifications(prev =>
+                prev.map(n =>
+                  n.id === updatedNotification.id ? updatedNotification : n
+                )
+              );
+            }
+          )
+          .on(
+            "postgres_changes",
+            {
+              event: "DELETE",
+              schema: "public",
+              table: "notifications",
+              filter: `user_id=eq.${user.id}`,
+            },
+            payload => {
+              if (!mounted) return;
+              const deletedNotification = payload.old as Notification;
+              setNotifications(prev =>
+                prev.filter(n => n.id !== deletedNotification.id)
+              );
+              setUnreadCount(prev =>
+                deletedNotification.is_read ? prev : Math.max(0, prev - 1)
+              );
+            }
+          )
           .subscribe();
 
-        // Cleanup subscription
-        return () => {
-          supabase.removeChannel(channel);
-        };
       } catch (error) {
-        console.error('Error initializing notifications:', error);
+        console.error("Error initializing notifications:", error);
       }
     }
 
     initialize();
+
+    // Cleanup function
+    return () => {
+      mounted = false;
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
   }, [supabase]);
 
   // Mark notification as read
@@ -135,9 +193,9 @@ export function NotificationsDropdown() {
     if (!notification.is_read) {
       try {
         const { error } = await supabase
-          .from('notifications')
+          .from("notifications")
           .update({ is_read: true })
-          .eq('id', notification.id);
+          .eq("id", notification.id);
 
         if (error) throw error;
 
@@ -148,58 +206,84 @@ export function NotificationsDropdown() {
           )
         );
       } catch (error) {
-        console.error('Error marking notification as read:', error);
+        console.error("Error marking notification as read:", error);
       }
     }
   };
 
   // Mark all notifications as read
   const handleMarkAllAsRead = async () => {
+    if (isMarkingRead) return;
+    
+    setIsMarkingRead(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .update({ is_read: true })
-        .eq('user_id', user.id)
-        .eq('is_read', false);
+        .eq("user_id", user.id)
+        .eq("is_read", false);
 
       if (error) throw error;
 
+      // Update state directly for immediate feedback
       setUnreadCount(0);
-      setNotifications(prev =>
-        prev.map(n => ({ ...n, is_read: true }))
-      );
-      
-      toast.success('All notifications marked as read');
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+
+      toast.success("All notifications marked as read");
     } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-      toast.error('Failed to mark all notifications as read');
+      console.error("Error marking all notifications as read:", error);
+      toast.error("Failed to mark all notifications as read");
+    } finally {
+      setIsMarkingRead(false);
     }
   };
 
   // Delete all notifications
   const handleDeleteAll = async () => {
+    if (isDeleting) return;
+    
+    setIsDeleting(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        console.error("No user found");
+        return;
+      }
 
-      const { error } = await supabase
-        .from('notifications')
-        .delete()
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-
-      setNotifications([]);
-      setUnreadCount(0);
-      setShowDeleteDialog(false);
+      console.log("Attempting to delete notifications for user:", user.id);
       
-      toast.success('All notifications deleted');
+      const { data, error } = await supabase
+        .from("notifications")
+        .delete()
+        .eq("user_id", user.id)
+        .select();
+
+      if (error) {
+        console.error("Delete error:", error);
+        throw error;
+      }
+
+      console.log("Deleted notifications:", data);
+      
+      // Show success message
+      toast.success("All notifications deleted");
+      
+      // Refresh the page to ensure clean state
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
-      console.error('Error deleting all notifications:', error);
-      toast.error('Failed to delete all notifications');
+      console.error("Error deleting all notifications:", error);
+      toast.error(`Failed to delete notifications: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setShowDeleteDialog(false);
+      setIsDeleting(false);
     }
   };
 
@@ -210,8 +294,8 @@ export function NotificationsDropdown() {
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
-              <Badge 
-                variant="destructive" 
+              <Badge
+                variant="destructive"
                 className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
               >
                 {unreadCount}
@@ -229,18 +313,20 @@ export function NotificationsDropdown() {
                     variant="ghost"
                     size="sm"
                     onClick={handleMarkAllAsRead}
+                    disabled={isMarkingRead || isDeleting}
                     className="h-6 px-2 text-xs"
                     title="Mark all as read"
                   >
                     <Check className="h-3 w-3 mr-1" />
-                    Read All
+                    {isMarkingRead ? "Reading..." : "Read All"}
                   </Button>
                 )}
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowDeleteDialog(true)}
-                  className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                  disabled={isMarkingRead || isDeleting}
+                  className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 disabled:opacity-50"
                   title="Delete all notifications"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
@@ -256,16 +342,21 @@ export function NotificationsDropdown() {
                 No notifications
               </div>
             ) : (
-              notifications.map((notification) => (
+              notifications.map(notification => (
                 <DropdownMenuItem
                   key={notification.id}
                   onSelect={() => handleNotificationClick(notification)}
                   className="flex flex-col items-start gap-1 p-4 cursor-pointer"
                 >
                   <div className="flex items-center gap-2 w-full">
-                    <span className="font-medium flex-1">{notification.title}</span>
+                    <span className="font-medium flex-1">
+                      {notification.title}
+                    </span>
                     {!notification.is_read && (
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-100 text-blue-800"
+                      >
                         New
                       </Badge>
                     )}
@@ -289,21 +380,24 @@ export function NotificationsDropdown() {
           <DialogHeader>
             <DialogTitle>Delete All Notifications</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete all notifications? This action cannot be undone.
+              Are you sure you want to delete all notifications? This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteAll}
+              disabled={isDeleting}
             >
-              Delete All
+              {isDeleting ? "Deleting..." : "Delete All"}
             </Button>
           </DialogFooter>
         </DialogContent>
