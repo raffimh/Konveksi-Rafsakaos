@@ -81,7 +81,7 @@ export function AddMaterialDialog({ onMaterialAdded }: AddMaterialDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
           <Plus className="mr-2 h-4 w-4" />
           Add Material
         </Button>
@@ -166,7 +166,12 @@ export function AddMaterialDialog({ onMaterialAdded }: AddMaterialDialogProps) {
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Add Material</Button>
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              >
+                Add Material
+              </Button>
             </DialogFooter>
           </form>
         </Form>

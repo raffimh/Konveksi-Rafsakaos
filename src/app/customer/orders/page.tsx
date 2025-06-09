@@ -133,7 +133,10 @@ export default function OrdersPage() {
             onChange={handleSearchChange}
             className="w-[200px] sm:w-[300px]"
           />
-          <Button onClick={() => router.push("/customer/orders/new")}>
+          <Button
+            onClick={() => router.push("/customer/orders/new")}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+          >
             <PlusCircle className="mr-2 h-4 w-4" />
             New Order
           </Button>

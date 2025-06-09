@@ -2,7 +2,7 @@
 
 ![Screenshot](screenshot.png)
 
-A modern web application for managing clothing production orders built with Next.js 15 and Supabase.
+A modern web application for managing clothing production orders built with Next.js 15 and Supabase
 
 ## Features
 

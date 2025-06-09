@@ -20,6 +20,8 @@ import {
   Sparkles,
   Home,
   Search,
+  Factory,
+  Warehouse,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -47,6 +49,18 @@ const adminRoutes = [
     label: "Materials",
     icon: Shirt,
     description: "Material catalog"
+  },
+  {
+    href: "/admin/production",
+    label: "Production",
+    icon: Factory,
+    description: "Production planning"
+  },
+  {
+    href: "/admin/inventory",
+    label: "Inventory",
+    icon: Warehouse,
+    description: "Stock management"
   },
   {
     href: "/admin/reports",

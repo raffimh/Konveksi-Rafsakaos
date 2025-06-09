@@ -187,7 +187,12 @@ export function EditMaterialDialog({
               <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Update Material</Button>
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              >
+                Update Material
+              </Button>
             </DialogFooter>
           </form>
         </Form>

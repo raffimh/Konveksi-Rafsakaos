@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { FloatingCard } from "@/components/ui/floating-card";
+import { CustomerSlider } from "@/components/ui/customer-slider";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -68,7 +69,7 @@ export default function Home() {
     },
   ];
 
-  const testimonials = [
+  const customers = [
     {
       name: "Sarah Johnson",
       role: "Brand Owner",
@@ -95,6 +96,69 @@ export default function Home() {
       rating: 5,
       avatar:
         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=64&h=64&fit=crop&crop=face",
+    },
+    {
+      name: "David Martinez",
+      role: "E-commerce Owner",
+      content:
+        "Amazing turnaround time and consistent quality. They helped us scale our clothing line efficiently with their reliable production.",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face",
+    },
+    {
+      name: "Emily Rodriguez",
+      role: "Creative Director",
+      content:
+        "The attention to detail is incredible. Every piece was perfectly crafted according to our specifications. Couldn't be happier!",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=64&h=64&fit=crop&crop=face",
+    },
+    {
+      name: "James Wilson",
+      role: "Boutique Owner",
+      content:
+        "From design upload to delivery, everything was seamless. The quality control and communication throughout the process was excellent.",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=64&h=64&fit=crop&crop=face",
+    },
+    {
+      name: "Amanda Thompson",
+      role: "Online Retailer",
+      content:
+        "Competitive pricing without compromising on quality. The materials are premium and the craftsmanship is top-notch.",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=64&h=64&fit=crop&crop=face",
+    },
+    {
+      name: "Carlos Garcia",
+      role: "Fashion Entrepreneur",
+      content:
+        "Their production efficiency is remarkable. We've been able to launch multiple collections on time thanks to their reliable service.",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=64&h=64&fit=crop&crop=face",
+    },
+    {
+      name: "Jessica Kim",
+      role: "Brand Manager",
+      content:
+        "The real-time tracking system gives us complete visibility. We always know exactly where our orders stand in the production pipeline.",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=64&h=64&fit=crop&crop=face",
+    },
+    {
+      name: "Robert Taylor",
+      role: "Clothing Line Owner",
+      content:
+        "Professional team that understands fashion business needs. They've been instrumental in helping us maintain consistent quality standards.",
+      rating: 5,
+      avatar:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=64&h=64&fit=crop&crop=face",
     },
   ];
 
@@ -373,7 +437,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <Image
-                src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=600&h=400&fit=crop"
+                src="https://images.unsplash.com/photo-1630930737762-95fba69e2dad?w=600&h=400&fit=crop"
                 alt="Manufacturing Process"
                 width={600}
                 height={400}
@@ -438,7 +502,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Customer Testimonials Slider Section */}
       <section id="testimonials" className="py-20 md:py-32 bg-muted/30">
         <div className="container mx-auto max-w-7xl px-6">
           <div className="text-center space-y-4 mb-16">
@@ -456,44 +520,37 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card
-                key={index}
-                className="bg-white/50 backdrop-blur-sm border-0 shadow-lg"
-              >
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground italic">
-                    &quot;{testimonial.content}&ldquo;
-                  </p>
-                  <div className="flex items-center space-x-3">
-                    <Image
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                    <div>
-                      <p className="font-semibold text-sm">
-                        {testimonial.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {testimonial.role}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          {/* Auto-sliding Customer Reviews */}
+          <div className="space-y-8">
+            {/* First Row - Moving Right */}
+            <CustomerSlider
+              customers={customers.slice(0, 5)}
+              direction="right"
+              speed={25}
+              className="w-full"
+            />
+
+            {/* Second Row - Moving Left */}
+            <CustomerSlider
+              customers={customers.slice(5, 10)}
+              direction="left"
+              speed={25}
+              className="w-full"
+            />
+          </div>
+
+          {/* Call to Action */}
+          <div className="text-center mt-16">
+            <p className="text-sm text-muted-foreground mb-4">
+              Join 200+ satisfied customers and start your project today
+            </p>
+            <Button
+              onClick={() => router.push("/auth/register")}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              Get Started Now
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
           </div>
         </div>
       </section>

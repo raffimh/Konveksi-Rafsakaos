@@ -80,14 +80,24 @@ export default function PaymentPage() {
       // Simulate payment processing delay
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Update order status
+      // Get current user to ensure authentication
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Authentication required", { id: toastId });
+        router.push("/auth/login");
+        return;
+      }
+
+      // Update order status and payment in one operation
       const { error } = await supabase
         .from("orders")
-        .update({ 
+        .update({
           status: "diproses",
-          is_paid: true 
+          is_paid: true,
+          updated_at: new Date().toISOString()
         })
-        .eq("id", order.id);
+        .eq("id", order.id)
+        .eq("customer_id", user.id); // Ensure customer can only update their own orders
 
       if (error) {
         console.error("Payment error:", error);
@@ -294,8 +304,8 @@ export default function PaymentPage() {
 
           {/* Demo Payment Button */}
           <div className="pt-4 border-t">
-            <Button 
-              className="w-full"
+            <Button
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
               size="lg"
               onClick={handlePayment}
               disabled={isProcessingPayment}
