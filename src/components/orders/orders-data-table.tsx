@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import Image from "next/image"
-import { Package, CreditCard, Eye } from "lucide-react"
+import { Package, CreditCard, Eye, Archive } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useRouter } from "next/navigation"
 import { OrderDetailDialog } from "./order-detail-dialog"
@@ -48,6 +48,7 @@ interface OrdersDataTableProps {
   isLoading: boolean
   isAdmin?: boolean
   onStatusChange?: (orderId: string, newStatus: string) => void
+  onArchive?: (orderId: string) => void
   showActions?: boolean
 }
 
@@ -90,6 +91,7 @@ export function OrdersDataTable({
   isLoading,
   isAdmin,
   onStatusChange,
+  onArchive,
   showActions
 }: OrdersDataTableProps) {
   const router = useRouter();
@@ -252,6 +254,17 @@ export function OrdersDataTable({
               <SelectItem value="selesai">Completed</SelectItem>
             </SelectContent>
           </Select>
+        )}
+        {isAdmin && onArchive && row.original.status === "selesai" && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onClick={() => onArchive(row.original.id)}
+          >
+            <Archive className="mr-1 h-3 w-3" />
+            Archive
+          </Button>
         )}
       </div>
     ),

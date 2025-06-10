@@ -11,8 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useDebounce } from "@/lib/hooks/use-debounce";
+import { Archive } from "lucide-react";
+import { startProgress } from "@/components/ui/progress-bar";
+import { useRouter } from "next/navigation";
 
 const orderStatuses = [
   { value: "all", label: "All Orders" },
@@ -48,12 +52,13 @@ export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 300);
   const supabase = createClient();
+  const router = useRouter();
 
   const loadOrders = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      // Base query
+      // Base query - exclude archived orders
       let query = supabase
         .from("orders")
         .select(`
@@ -62,7 +67,8 @@ export default function AdminOrdersPage() {
             display_name,
             email
           )
-        `);
+        `)
+        .eq("archived", false);
 
       // Apply status filter
       if (statusFilter !== "all") {
@@ -151,6 +157,42 @@ export default function AdminOrdersPage() {
     }
   }
 
+  async function handleArchiveOrder(orderId: string) {
+    try {
+      // First check if admin
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile || profile.role !== "admin") {
+        throw new Error("Not authorized");
+      }
+
+      // Archive the order
+      const { error } = await supabase
+        .from("orders")
+        .update({
+          archived: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", orderId)
+        .eq("status", "selesai"); // Only archive completed orders
+
+      if (error) throw error;
+
+      toast.success("Order archived successfully");
+      loadOrders();
+    } catch (error) {
+      console.error("Failed to archive order:", error);
+      toast.error("Failed to archive order");
+    }
+  }
+
   function calculateEstimatedDays(totalOrders: number) {
     const baseTime = 7; // Base time per order in days
     const maxOrdersPerWeek = 7; // Maximum orders that can be processed per week
@@ -190,6 +232,17 @@ export default function AdminOrdersPage() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            onClick={() => {
+              startProgress();
+              router.push('/admin/orders/archive');
+            }}
+            className="flex items-center gap-2"
+          >
+            <Archive className="h-4 w-4" />
+            View Archive
+          </Button>
         </div>
       </div>
 
@@ -200,6 +253,7 @@ export default function AdminOrdersPage() {
           isAdmin
           showActions
           onStatusChange={handleStatusChange}
+          onArchive={handleArchiveOrder}
         />
       </div>
     </div>

@@ -235,7 +235,9 @@ export default function InventoryPage() {
         <div className="flex items-center gap-2">
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => {
+              <Button
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                onClick={() => {
                 setEditingItem(null);
                 form.reset();
               }}>
@@ -371,7 +373,10 @@ export default function InventoryPage() {
                     >
                       Cancel
                     </Button>
-                    <Button type="submit">
+                    <Button
+                      type="submit"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                    >
                       {editingItem ? "Update" : "Add"} Item
                     </Button>
                   </div>
@@ -545,6 +550,7 @@ export default function InventoryPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-950/20"
                           onClick={() => openEditDialog(item)}
                         >
                           <Edit3 className="h-4 w-4" />
@@ -552,6 +558,7 @@ export default function InventoryPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          className="border-red-200 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/20"
                           onClick={() => deleteItem(item.id)}
                         >
                           <Trash2 className="h-4 w-4" />

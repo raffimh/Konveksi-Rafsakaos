@@ -331,11 +331,20 @@ export default function ReportsPage() {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={loadReportData} variant="outline" size="sm">
+          <Button
+            onClick={loadReportData}
+            variant="outline"
+            size="sm"
+            className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-950/20"
+          >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
-          <Button onClick={exportReport} size="sm">
+          <Button
+            onClick={exportReport}
+            size="sm"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+          >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>

@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import { useState, useEffect } from "react";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 
 interface AuthLayoutProps {
@@ -8,27 +10,92 @@ interface AuthLayoutProps {
   description: string;
 }
 
+const testimonials = [
+  {
+    id: 1,
+    text: "Sudah 3 tahun bekerja sama dengan Rafsakaos untuk produksi seragam perusahaan. Kualitas jahitan rapi, bahan premium, dan selalu on-time delivery.",
+    name: "Siti Nurhaliza",
+    role: "HRD Manager, PT. Maju Bersama",
+    avatar: "SN",
+    rating: 5,
+  },
+  {
+    id: 2,
+    text: "Tim Rafsakaos sangat profesional dalam handling custom jersey tim futsal kami. Design sesuai request dan hasil produksi memuaskan!",
+    name: "Budi Santoso",
+    role: "Ketua Tim Garuda FC",
+    avatar: "BS",
+    rating: 5,
+  },
+  {
+    id: 3,
+    text: "Pelayanan customer service yang responsif dan proses produksi yang transparan. Sangat recommended untuk kebutuhan konveksi berkualitas.",
+    name: "Maya Indira",
+    role: "Owner, Boutique Luna",
+    avatar: "MI",
+    rating: 5,
+  },
+  {
+    id: 4,
+    text: "Dari mockup design hingga hasil jadi, semuanya sesuai ekspektasi. Rafsakaos memang partner terpercaya untuk usaha fashion kami.",
+    name: "Andi Rahman",
+    role: "Founder, Streetwear Indo",
+    avatar: "AR",
+    rating: 5,
+  },
+];
+
 export default function AuthLayout({
   children,
   title,
   description,
 }: AuthLayoutProps) {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial(prev => (prev + 1) % testimonials.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
       <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         {/* Left Side - Hero Section */}
-        <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r overflow-hidden">
-          {/* Background Image */}
+        <div className="relative hidden h-full flex-col bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-10 text-white lg:flex dark:border-r overflow-hidden">
+          {/* Animated Background Pattern */}
           <div className="absolute inset-0">
-            <Image
-              src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-              alt="Fashion workspace"
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-purple-900/70 to-indigo-900/80" />
-            <div className="absolute inset-0 bg-black/20" />
+            {/* Custom textile pattern background */}
+            <div className="absolute inset-0 opacity-10">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern
+                    id="textile"
+                    x="0"
+                    y="0"
+                    width="40"
+                    height="40"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <circle cx="20" cy="20" r="2" fill="white" opacity="0.3" />
+                    <path
+                      d="M0,20 L40,20 M20,0 L20,40"
+                      stroke="white"
+                      strokeWidth="0.5"
+                      opacity="0.2"
+                    />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#textile)" />
+              </svg>
+            </div>
+
+            {/* Floating geometric shapes */}
+            <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-xl animate-pulse"></div>
+            <div className="absolute top-40 right-32 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-pink-600/20 rounded-lg rotate-45 blur-lg animate-bounce"></div>
+            <div className="absolute bottom-32 left-32 w-20 h-20 bg-gradient-to-br from-indigo-400/20 to-blue-600/20 rounded-full blur-lg animate-pulse delay-1000"></div>
+            <div className="absolute bottom-20 right-20 w-28 h-28 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-lg rotate-12 blur-xl animate-bounce delay-500"></div>
           </div>
 
           {/* Content */}
@@ -59,13 +126,13 @@ export default function AuthLayout({
             </div>
           </div>
 
-          {/* Features Grid */}
-          <div className="relative z-20 mt-8 grid grid-cols-2 gap-4">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <div className="flex items-center space-x-2 text-sm">
-                <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+          {/* Services Highlight */}
+          <div className="relative z-20 mt-8 space-y-6">
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:border-white/30 transition-all duration-300">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center">
                   <svg
-                    className="w-4 h-4 text-green-400"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -74,18 +141,27 @@ export default function AuthLayout({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    ></path>
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    />
                   </svg>
                 </div>
-                <span>Quality Guaranteed</span>
+                <div>
+                  <h3 className="font-semibold text-white mb-1">
+                    Custom Design
+                  </h3>
+                  <p className="text-sm text-blue-100 leading-relaxed">
+                    Desain custom sesuai kebutuhan brand Anda dengan konsultasi
+                    gratis dari tim ahli kami
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <div className="flex items-center space-x-2 text-sm">
-                <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:border-white/30 transition-all duration-300">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
                   <svg
-                    className="w-4 h-4 text-blue-400"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -94,18 +170,27 @@ export default function AuthLayout({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
-                <span>Fast Production</span>
+                <div>
+                  <h3 className="font-semibold text-white mb-1">
+                    Quality Materials
+                  </h3>
+                  <p className="text-sm text-blue-100 leading-relaxed">
+                    Menggunakan bahan berkualitas premium dengan standar
+                    internasional untuk hasil terbaik
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <div className="flex items-center space-x-2 text-sm">
-                <div className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
+
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:border-white/30 transition-all duration-300">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center">
                   <svg
-                    className="w-4 h-4 text-purple-400"
+                    className="w-6 h-6 text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -114,74 +199,111 @@ export default function AuthLayout({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    ></path>
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   </svg>
                 </div>
-                <span>Expert Team</span>
-              </div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-              <div className="flex items-center space-x-2 text-sm">
-                <div className="w-8 h-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 text-orange-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    ></path>
-                  </svg>
+                <div>
+                  <h3 className="font-semibold text-white mb-1">
+                    Fast Production
+                  </h3>
+                  <p className="text-sm text-blue-100 leading-relaxed">
+                    Produksi cepat dengan teknologi modern dan sistem manajemen
+                    yang efisien
+                  </p>
                 </div>
-                <span>Customer First</span>
               </div>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="relative z-20 mt-8 grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">200+</div>
-              <div className="text-sm text-blue-200">Projects</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">98%</div>
-              <div className="text-sm text-blue-200">Satisfaction</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">5+</div>
-              <div className="text-sm text-blue-200">Years</div>
-            </div>
-          </div>
-
-          {/* Testimonial */}
-          <div className="relative z-20 mt-auto">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-              <blockquote className="space-y-4">
-                <p className="text-lg leading-relaxed">
-                  &ldquo;Experience excellence in custom clothing with our
-                  trusted konveksi service. Quality craftsmanship meets modern
-                  efficiency.&rdquo;
-                </p>
-                <footer className="flex items-center space-x-4">
-                  <Image
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
-                    alt="CEO"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                  <div>
-                    <div className="font-semibold text-white">Abdul Hadi</div>
-                    <div className="text-sm text-blue-200">CEO, Rafsakaos</div>
+          {/* Business Stats */}
+          <div className="relative z-20 mt-8">
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-3xl font-bold text-white mb-1">500+</div>
+                  <div className="text-xs text-blue-200 uppercase tracking-wider">
+                    Brand Partner
                   </div>
-                </footer>
-              </blockquote>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-white mb-1">50K+</div>
+                  <div className="text-xs text-blue-200 uppercase tracking-wider">
+                    Produk Selesai
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-white mb-1">7+</div>
+                  <div className="text-xs text-blue-200 uppercase tracking-wider">
+                    Tahun Pengalaman
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Client Testimonial Slider */}
+          <div className="relative z-20 mt-auto">
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/20 overflow-hidden">
+              <div className="relative">
+                {/* Current Testimonial */}
+                <div
+                  key={testimonials[currentTestimonial].id}
+                  className="animate-fade-in"
+                >
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-semibold text-sm">
+                        {testimonials[currentTestimonial].avatar}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <blockquote className="text-white leading-relaxed mb-4">
+                        &ldquo;{testimonials[currentTestimonial].text}&rdquo;
+                      </blockquote>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold text-white">
+                            {testimonials[currentTestimonial].name}
+                          </div>
+                          <div className="text-sm text-blue-200">
+                            {testimonials[currentTestimonial].role}
+                          </div>
+                        </div>
+                        <div className="flex text-yellow-400">
+                          {[
+                            ...Array(testimonials[currentTestimonial].rating),
+                          ].map((_, i) => (
+                            <svg
+                              key={i}
+                              className="w-4 h-4"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Dots */}
+                <div className="flex justify-center space-x-2 mt-6">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTestimonial(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index === currentTestimonial
+                          ? "bg-white scale-125"
+                          : "bg-white/40 hover:bg-white/60"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

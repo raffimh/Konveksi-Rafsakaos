@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { OrdersTable } from "@/components/orders/orders-table";
 import { formatCurrency } from "@/lib/utils";
+import { useTranslation } from "@/lib/hooks/use-i18n";
 import { toast } from "sonner";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { MiniChart } from "@/components/ui/mini-chart";
@@ -51,6 +52,7 @@ interface Order {
 }
 
 export default function CustomerPage() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<CustomerStats>({
     totalOrders: 0,
     pendingOrders: 0,
@@ -136,17 +138,17 @@ export default function CustomerPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-            Welcome Back!
+            {t.dashboard.welcome}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Here&apos;s an overview of your orders and activity with Rafsakaos.
+            {t.dashboard.overview}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
             <Link href="/customer/orders/new">
               <PlusCircle className="mr-2 h-4 w-4" />
-              New Order
+              {t.orders.newOrder}
             </Link>
           </Button>
         </div>
@@ -158,7 +160,7 @@ export default function CustomerPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/20 dark:to-indigo-900/20 border-blue-200/50 dark:border-blue-800/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">
-              Total Orders
+              {t.dashboard.totalOrders}
             </CardTitle>
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
               <Package className="h-5 w-5 text-white" />
@@ -336,7 +338,7 @@ export default function CustomerPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-              Recent Orders
+              {t.dashboard.recentOrders}
             </h2>
             <p className="text-muted-foreground text-sm">
               Your latest custom clothing orders

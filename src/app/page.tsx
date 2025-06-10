@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { FloatingCard } from "@/components/ui/floating-card";
 import { CustomerSlider } from "@/components/ui/customer-slider";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useTranslation } from "@/lib/hooks/use-i18n";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -30,44 +32,14 @@ import { useState } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  const faqs = [
-    {
-      question: "What is the minimum order for custom production?",
-      answer:
-        "Our minimum order is 24 pieces per design. This ensures production efficiency and competitive pricing for our customers.",
-    },
-    {
-      question: "How long does production take?",
-      answer:
-        "Standard production time is 7-14 working days, depending on design complexity and order quantity. We provide accurate estimates after reviewing your order details.",
-    },
-    {
-      question: "What materials are available?",
-      answer:
-        "We offer various high-quality materials including Cotton Combed 24s, Cotton Combed 30s, Denim, Rayon, and Linen. Each material has different characteristics and pricing.",
-    },
-    {
-      question: "How do I upload my design?",
-      answer:
-        "You can upload designs in PNG, JPG, or PDF format through our platform. Our team will review your design and provide feedback if adjustments are needed for production.",
-    },
-    {
-      question: "Is there a quality guarantee?",
-      answer:
-        "Yes, we provide quality guarantee for all products. If there are any quality issues with production, we will replace or repair at no additional cost.",
-    },
-    {
-      question: "How does the payment system work?",
-      answer:
-        "We use a secure payment system. Payment is made after order confirmation, and you will receive a unique code for bank transfer.",
-    },
-  ];
+  const faqs = t.faqData.questions;
 
   const customers = [
     {
@@ -182,37 +154,38 @@ export default function Home() {
               href="#features"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
-              Features
+              {t.nav.features}
             </Link>
             <Link
               href="#about"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
-              About
+              {t.nav.about}
             </Link>
             <Link
               href="#testimonials"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
-              Testimonials
+              {t.nav.testimonials}
             </Link>
             <Link
               href="#faq"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
-              FAQ
+              {t.nav.faq}
             </Link>
           </nav>
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher variant="toggle" />
             <Button variant="ghost" onClick={() => router.push("/auth/login")}>
               <LogIn className="w-4 h-4 mr-2" />
-              Sign In
+              {t.auth.signIn}
             </Button>
             <Button
               onClick={() => router.push("/auth/register")}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
-              Get Started
+              {t.auth.getStarted}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -228,17 +201,15 @@ export default function Home() {
             <div className="space-y-8">
               <div className="space-y-4">
                 <Badge variant="secondary" className="w-fit">
-                  🚀 Professional Garment Manufacturing
+                  {t.home.hero.badge}
                 </Badge>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                  Custom Clothing
+                  {t.home.hero.title}
                   <br />
-                  <AnimatedGradientText>Made Simple</AnimatedGradientText>
+                  <AnimatedGradientText>{t.home.hero.titleHighlight}</AnimatedGradientText>
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-md">
-                  Professional garment production service for your brand.
-                  Quality materials, expert craftsmanship, and reliable delivery
-                  with real-time tracking.
+                  {t.home.hero.description}
                 </p>
               </div>
 
@@ -253,8 +224,8 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">4.9/5</span>{" "}
-                  from 200+ happy customers
+                  <span className="font-semibold text-foreground">{t.home.hero.rating}</span>{" "}
+                  {t.home.hero.ratingText}
                 </div>
               </div>
 
@@ -265,7 +236,7 @@ export default function Home() {
                   onClick={() => router.push("/auth/register")}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  Start Your Project
+                  {t.home.hero.startProject}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
                 <Button
@@ -275,7 +246,7 @@ export default function Home() {
                   className="border-2 hover:bg-muted/50"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
-                  Sign In
+                  {t.home.hero.signIn}
                 </Button>
               </div>
 
@@ -284,13 +255,13 @@ export default function Home() {
                 <div className="flex items-center space-x-2">
                   <Shield className="w-5 h-5 text-green-600" />
                   <span className="text-sm text-muted-foreground">
-                    Quality Guaranteed
+                    {t.home.hero.qualityGuaranteed}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Zap className="w-5 h-5 text-blue-600" />
                   <span className="text-sm text-muted-foreground">
-                    Fast Production
+                    {t.home.hero.fastProduction}
                   </span>
                 </div>
               </div>
@@ -343,19 +314,29 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 md:py-32 bg-muted/30">
-        <div className="container mx-auto max-w-7xl px-6">
+      <section id="features" className="py-20 md:py-32 relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 dark:from-indigo-950/30 dark:via-blue-950/30 dark:to-cyan-950/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)] animate-pulse" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)] animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        {/* Floating Geometric Shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full animate-float" />
+        <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-lg rotate-45 animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-32 left-1/4 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full animate-float" style={{ animationDelay: '3s' }} />
+        
+        <div className="relative">
+          <div className="contain/*  */er mx-auto max-w-7xl px-6">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="secondary" className="mx-auto">
-              ✨ Why Choose Us
+              {t.home.features.badge}
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold">
-              Everything You Need for
-              <AnimatedGradientText> Custom Production</AnimatedGradientText>
+              {t.home.features.title}
+              <AnimatedGradientText>{t.home.features.titleHighlight}</AnimatedGradientText>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              From design upload to final delivery, we provide end-to-end
-              solutions for your custom clothing needs.
+              {t.home.features.description}
             </p>
           </div>
 
@@ -363,44 +344,38 @@ export default function Home() {
             {[
               {
                 icon: Users,
-                title: "Customer-Centric",
-                description:
-                  "Dedicated support throughout your production journey with real-time notifications and updates.",
+                title: t.home.features.customerCentric.title,
+                description: t.home.features.customerCentric.description,
                 color: "bg-blue-100 text-blue-600",
               },
               {
                 icon: Shirt,
-                title: "Quality Materials",
-                description:
-                  "Premium fabrics including Cotton Combed, Denim, Rayon, and Linen for superior products.",
+                title: t.home.features.qualityMaterials.title,
+                description: t.home.features.qualityMaterials.description,
                 color: "bg-purple-100 text-purple-600",
               },
               {
                 icon: Clock,
-                title: "Fast Production",
-                description:
-                  "Efficient manufacturing with 7-14 days turnaround time and transparent progress tracking.",
+                title: t.home.features.fastProduction.title,
+                description: t.home.features.fastProduction.description,
                 color: "bg-green-100 text-green-600",
               },
               {
                 icon: Shield,
-                title: "Quality Guarantee",
-                description:
-                  "100% quality assurance with replacement guarantee if products don't meet standards.",
+                title: t.home.features.qualityGuarantee.title,
+                description: t.home.features.qualityGuarantee.description,
                 color: "bg-orange-100 text-orange-600",
               },
               {
                 icon: MessageCircle,
-                title: "Real-time Updates",
-                description:
-                  "Stay informed with instant notifications about your order status and production progress.",
+                title: t.home.features.realTimeUpdates.title,
+                description: t.home.features.realTimeUpdates.description,
                 color: "bg-pink-100 text-pink-600",
               },
               {
                 icon: Award,
-                title: "Professional Team",
-                description:
-                  "Experienced craftsmen and quality control team ensuring every piece meets excellence.",
+                title: t.home.features.professionalTeam.title,
+                description: t.home.features.professionalTeam.description,
                 color: "bg-indigo-100 text-indigo-600",
               },
             ].map((feature, index) => (
@@ -429,6 +404,7 @@ export default function Home() {
             ))}
           </div>
         </div>
+        </div>
       </section>
 
       {/* About Section */}
@@ -445,19 +421,16 @@ export default function Home() {
               />
             </div>
             <div className="space-y-6">
-              <Badge variant="secondary">🏭 Our Story</Badge>
+              <Badge variant="secondary">{t.home.about.badge}</Badge>
               <h2 className="text-3xl md:text-4xl font-bold">
-                Crafting Quality Since
+                {t.home.about.title}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {" "}
-                  <AnimatedGradientText>Day One</AnimatedGradientText>
+                  <AnimatedGradientText>{t.home.about.titleHighlight}</AnimatedGradientText>
                 </span>
               </h2>
               <p className="text-lg text-muted-foreground">
-                With years of experience in garment manufacturing, we&apos;ve
-                perfected the art of custom clothing production. Our
-                state-of-the-art facility and skilled craftsmen ensure every
-                piece meets the highest standards.
+                {t.home.about.description}
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -466,7 +439,7 @@ export default function Home() {
                     <span className="font-semibold">200+</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Projects Completed
+                    {t.home.about.stats.projectsCompleted}
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -475,7 +448,7 @@ export default function Home() {
                     <span className="font-semibold">98%</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Customer Satisfaction
+                    {t.home.about.stats.customerSatisfaction}
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -484,7 +457,7 @@ export default function Home() {
                     <span className="font-semibold">50+</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Partner Brands
+                    {t.home.about.stats.partnerBrands}
                   </p>
                 </div>
                 <div className="space-y-2">
@@ -493,7 +466,7 @@ export default function Home() {
                     <span className="font-semibold">5+</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Years Experience
+                    {t.home.about.stats.yearsExperience}
                   </p>
                 </div>
               </div>
@@ -506,17 +479,16 @@ export default function Home() {
       <section id="testimonials" className="py-20 md:py-32 bg-muted/30">
         <div className="container mx-auto max-w-7xl px-6">
           <div className="text-center space-y-4 mb-16">
-            <Badge variant="secondary">💬 Customer Stories</Badge>
+            <Badge variant="secondary">{t.home.testimonials.badge}</Badge>
             <h2 className="text-3xl md:text-4xl font-bold">
-              What Our
+              {t.home.testimonials.title}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {" "}
-                <AnimatedGradientText>Customers Say</AnimatedGradientText>
+                <AnimatedGradientText>{t.home.testimonials.titleHighlight}</AnimatedGradientText>
               </span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Don&apos;t just take our word for it. Here&apos;s what our
-              satisfied customers have to say about their experience.
+              {t.home.testimonials.description}
             </p>
           </div>
 
@@ -542,13 +514,13 @@ export default function Home() {
           {/* Call to Action */}
           <div className="text-center mt-16">
             <p className="text-sm text-muted-foreground mb-4">
-              Join 200+ satisfied customers and start your project today
+              {t.home.testimonials.viewAllTestimonials}
             </p>
             <Button
               onClick={() => router.push("/auth/register")}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
-              Get Started Now
+              {t.auth.getStarted}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -556,20 +528,30 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 md:py-32">
+      <section id="faq" className="py-20 md:py-32 relative overflow-hidden">
+        {/* Background Similar to Features but with Blue Theme */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 dark:from-blue-950/20 dark:via-slate-950/20 dark:to-indigo-950/20" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(59,130,246,0.1),transparent_50%)] animate-pulse" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,rgba(99,102,241,0.1),transparent_50%)] animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        {/* Different Floating Geometric Shapes for FAQ */}
+        <div className="absolute top-16 right-16 w-24 h-24 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-2xl rotate-12 animate-float" />
+        <div className="absolute top-1/3 left-12 w-16 h-16 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-20 right-1/3 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-xl rotate-45 animate-float" style={{ animationDelay: '3s' }} />
+        
+        <div className="relative">
         <div className="container mx-auto max-w-4xl px-6">
           <div className="text-center space-y-4 mb-16">
-            <Badge variant="secondary">❓ FAQ</Badge>
+            <Badge variant="secondary">{t.home.faq.badge}</Badge>
             <h2 className="text-3xl md:text-4xl font-bold">
-              Frequently Asked
+              {t.home.faq.title}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {" "}
-                <AnimatedGradientText>Questions</AnimatedGradientText>
+                <AnimatedGradientText>{t.home.faq.titleHighlight}</AnimatedGradientText>
               </span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              Everything you need to know about our custom clothing
-              manufacturing service.
+              {t.home.faq.description}
             </p>
           </div>
 
@@ -598,6 +580,7 @@ export default function Home() {
             ))}
           </div>
         </div>
+        </div>
       </section>
 
       {/* CTA Section */}
@@ -605,12 +588,10 @@ export default function Home() {
         <div className="container mx-auto max-w-4xl px-6 text-center">
           <div className="space-y-8 text-white">
             <h2 className="text-3xl md:text-4xl font-bold">
-              Ready to Start Your Custom Project?
+              {t.home.cta.title}
             </h2>
             <p className="text-lg text-blue-100 max-w-2xl mx-auto">
-              Join hundreds of satisfied customers who trust us with their
-              custom clothing needs. Get started today and experience the
-              difference quality makes.
+              {t.home.cta.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -618,16 +599,16 @@ export default function Home() {
                 onClick={() => router.push("/auth/register")}
                 className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg"
               >
-                Start Your Project
+                {t.home.cta.startNow}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <Button
                 variant="outline"
                 size="lg"
                 onClick={() => router.push("/auth/login")}
-                className="border-white text-black hover:bg-white/10"
+                className="border-white text-black hover:text-white hover:bg-white/10"
               >
-                Sign In
+                {t.auth.signIn}
               </Button>
             </div>
           </div>
@@ -647,7 +628,7 @@ export default function Home() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2025 Rafsakaos Konveksi. All rights reserved.
+              © 2025 Rafsakaos Konveksi. {t.home.footer.allRightsReserved}
             </p>
           </div>
         </div>

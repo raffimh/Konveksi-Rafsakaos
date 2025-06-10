@@ -26,7 +26,8 @@ CREATE TABLE public.orders (
   total_amount integer NOT NULL,
   unique_code integer NOT NULL,
   estimated_completion_days integer,
-  is_paid boolean DEFAULT false
+  is_paid boolean DEFAULT false,
+  archived boolean DEFAULT false
 );
 
 CREATE TABLE public.materials (

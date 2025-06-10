@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { OrdersDataTable } from "@/components/orders/orders-data-table";
 import { formatCurrency } from "@/lib/utils";
+import { useTranslation } from "@/lib/hooks/use-i18n";
 import { toast } from "sonner";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { MiniChart } from "@/components/ui/mini-chart";
@@ -55,6 +56,7 @@ interface Order {
 }
 
 export default function AdminPage() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<DashboardStats>({
     currentPeriod: {
       revenue: 0,
@@ -209,10 +211,10 @@ export default function AdminPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-            Dashboard Overview
+            {t.dashboard.overview}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Welcome back! Here&apos;s what&apos;s happening with your business today.
+            {t.dashboard.welcome}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -229,7 +231,7 @@ export default function AdminPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/20 dark:to-indigo-900/20 border-blue-200/50 dark:border-blue-800/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">
-              Total Revenue
+              {t.dashboard.totalRevenue}
             </CardTitle>
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
               <DollarSign className="h-5 w-5 text-white" />
@@ -259,7 +261,7 @@ export default function AdminPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950/20 dark:to-emerald-900/20 border-green-200/50 dark:border-green-800/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">
-              Total Orders
+              {t.dashboard.totalOrders}
             </CardTitle>
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
               <ShoppingCart className="h-5 w-5 text-white" />
@@ -292,7 +294,7 @@ export default function AdminPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-100 dark:from-purple-950/20 dark:to-violet-900/20 border-purple-200/50 dark:border-purple-800/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300">
-              New Customers
+              {t.dashboard.totalCustomers}
             </CardTitle>
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center">
               <Users className="h-5 w-5 text-white" />
@@ -319,7 +321,7 @@ export default function AdminPage() {
         <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-amber-100 dark:from-orange-950/20 dark:to-amber-900/20 border-orange-200/50 dark:border-orange-800/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">
-              Available Materials
+              {t.materials.title}
             </CardTitle>
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center">
               <Package className="h-5 w-5 text-white" />
@@ -351,7 +353,7 @@ export default function AdminPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-              Recent Orders
+              {t.dashboard.recentOrders}
             </h2>
             <p className="text-muted-foreground text-sm">
               Latest orders from your customers

@@ -6,10 +6,13 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { UserNav } from "@/components/user-nav";
 import { NotificationsDropdown } from "@/components/notifications/notifications-dropdown";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useTranslation } from "@/lib/hooks/use-i18n";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import type { UserWithProfile } from "@/lib/types/user";
+import { startProgress } from "@/components/ui/progress-bar";
 import {
   BarChart,
   Package,
@@ -25,87 +28,96 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-const adminRoutes = [
-  {
-    href: "/admin",
-    label: "Overview",
-    icon: Home,
-    description: "Dashboard overview"
-  },
-  {
-    href: "/admin/orders",
-    label: "Orders",
-    icon: Package,
-    description: "Manage orders"
-  },
-  {
-    href: "/admin/customers",
-    label: "Customers",
-    icon: Users,
-    description: "Customer management"
-  },
-  {
-    href: "/admin/materials",
-    label: "Materials",
-    icon: Shirt,
-    description: "Material catalog"
-  },
-  {
-    href: "/admin/production",
-    label: "Production",
-    icon: Factory,
-    description: "Production planning"
-  },
-  {
-    href: "/admin/inventory",
-    label: "Inventory",
-    icon: Warehouse,
-    description: "Stock management"
-  },
-  {
-    href: "/admin/reports",
-    label: "Reports",
-    icon: BarChart,
-    description: "Analytics & reports"
-  },
-];
-
-const customerRoutes = [
-  {
-    href: "/customer",
-    label: "Overview",
-    icon: Home,
-    description: "Dashboard overview"
-  },
-  {
-    href: "/customer/orders",
-    label: "My Orders",
-    icon: Package,
-    description: "Your orders"
-  },
-  {
-    href: "/customer/materials",
-    label: "Materials",
-    icon: PackageOpen,
-    description: "Browse materials"
-  },
-];
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   isAdmin?: boolean;
 }
 
-export function DashboardLayout({ 
-  children, 
-  isAdmin = false 
+export function DashboardLayout({
+  children,
+  isAdmin = false
 }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState<UserWithProfile | null>(null);
   const pathname = usePathname();
-  const routes = isAdmin ? adminRoutes : customerRoutes;
+  const { t } = useTranslation();
   const supabase = createClient();
   const homePath = isAdmin ? "/admin" : "/customer";
+
+  const adminRoutes = [
+    {
+      href: "/admin",
+      label: t.nav.dashboard,
+      icon: Home,
+      description: t.dashboard.overview
+    },
+    {
+      href: "/admin/orders",
+      label: t.nav.orders,
+      icon: Package,
+      description: t.orders.title
+    },
+    {
+      href: "/admin/orders/archive",
+      label: t.nav.archive,
+      icon: PackageOpen,
+      description: "Archived orders"
+    },
+    {
+      href: "/admin/customers",
+      label: t.nav.customers,
+      icon: Users,
+      description: "Customer management"
+    },
+    {
+      href: "/admin/materials",
+      label: t.nav.materials,
+      icon: Shirt,
+      description: t.materials.title
+    },
+    {
+      href: "/admin/production",
+      label: t.nav.production,
+      icon: Factory,
+      description: "Production planning"
+    },
+    {
+      href: "/admin/inventory",
+      label: t.nav.inventory,
+      icon: Warehouse,
+      description: "Stock management"
+    },
+    {
+      href: "/admin/reports",
+      label: t.nav.reports,
+      icon: BarChart,
+      description: "Analytics & reports"
+    },
+  ];
+
+  const customerRoutes = [
+    {
+      href: "/customer",
+      label: t.nav.dashboard,
+      icon: Home,
+      description: t.dashboard.overview
+    },
+    {
+      href: "/customer/orders",
+      label: t.nav.orders,
+      icon: Package,
+      description: t.orders.orderHistory
+    },
+    {
+      href: "/customer/materials",
+      label: t.nav.materials,
+      icon: PackageOpen,
+      description: t.materials.title
+    },
+  ];
+
+  const routes = isAdmin ? adminRoutes : customerRoutes;
 
   useEffect(() => {
     const getUser = async () => {
@@ -151,7 +163,7 @@ export function DashboardLayout({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder={t.common.search + "..."}
               className="pl-10 bg-white/50 dark:bg-slate-700/50 border-white/20 focus:border-blue-500/50 transition-all duration-200"
             />
           </div>
@@ -165,6 +177,7 @@ export function DashboardLayout({
               <Link
                 key={route.href}
                 href={route.href}
+                onClick={startProgress}
                 className={cn(
                   "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 hover:bg-white/50 dark:hover:bg-slate-700/50",
                   isActive
@@ -200,7 +213,7 @@ export function DashboardLayout({
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <div className="font-semibold text-sm">Need Help?</div>
+                <div className="font-semibold text-sm">{t.common.info}</div>
                 <div className="text-xs text-muted-foreground">Contact support</div>
               </div>
             </div>
@@ -251,7 +264,10 @@ export function DashboardLayout({
                     <Link
                       key={route.href}
                       href={route.href}
-                      onClick={() => setIsSidebarOpen(false)}
+                      onClick={() => {
+                        startProgress();
+                        setIsSidebarOpen(false);
+                      }}
                       className={cn(
                         "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 hover:bg-white/50 dark:hover:bg-slate-700/50",
                         isActive
@@ -290,6 +306,7 @@ export function DashboardLayout({
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
+            <LanguageSwitcher variant="toggle" showText={false} />
             <NotificationsDropdown />
             {user && <UserNav user={user} />}
           </div>
