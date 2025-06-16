@@ -2,7 +2,7 @@
 
 ![Screenshot](screenshot.png)
 
-A modern multilingual web application for managing custom clothing production orders built with Next.js 15 and Supabase
+A modern multilingual web application for managing custom clothing production orders built with Next.js 15 and Supabase.
 
 ## Features
 
@@ -45,6 +45,7 @@ A modern multilingual web application for managing custom clothing production or
 - 🔒 **Protected Routes** with middleware authentication
 - 🚫 **Unauthorized Access Prevention**
 - 📧 **Email Verification** and password reset
+- 🛡️ **Temporary Email Protection** - Blacklist system preventing temporary/disposable email registration
 
 ## Tech Stack
 

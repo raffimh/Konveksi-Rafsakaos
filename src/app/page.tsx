@@ -27,6 +27,8 @@ import {
   TrendingUp,
   Plus,
   Minus,
+  Menu,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -34,9 +36,18 @@ export default function Home() {
   const router = useRouter();
   const { t } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
   };
 
   const faqs = t.faqData.questions;
@@ -135,9 +146,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col relative">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+      <header className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
         <div className="container mx-auto max-w-7xl px-6 flex h-16 items-center justify-between">
           <div className="flex items-center space-x-2">
             <Link href="/" className="flex items-center space-x-2">
@@ -149,6 +160,8 @@ export default function Home() {
               </span>
             </Link>
           </div>
+
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="#features"
@@ -175,7 +188,9 @@ export default function Home() {
               {t.nav.faq}
             </Link>
           </nav>
-          <div className="flex items-center space-x-4">
+
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher variant="toggle" />
             <Button variant="ghost" onClick={() => router.push("/auth/login")}>
               <LogIn className="w-4 h-4 mr-2" />
@@ -189,11 +204,91 @@ export default function Home() {
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center space-x-2">
+            <LanguageSwitcher variant="toggle" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleMobileMenu}
+              className="p-2"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </Button>
+          </div>
         </div>
+
+        {/* Mobile Navigation Dropdown - Small Right-Aligned */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-16 right-4 w-64 bg-background/95 backdrop-blur-md border border-border rounded-lg shadow-lg">
+            <div className="p-4">
+              <nav className="flex flex-col space-y-3">
+                <Link
+                  href="#features"
+                  className="text-sm font-medium hover:text-primary transition-colors py-1"
+                  onClick={closeMobileMenu}
+                >
+                  {t.nav.features}
+                </Link>
+                <Link
+                  href="#about"
+                  className="text-sm font-medium hover:text-primary transition-colors py-1"
+                  onClick={closeMobileMenu}
+                >
+                  {t.nav.about}
+                </Link>
+                <Link
+                  href="#testimonials"
+                  className="text-sm font-medium hover:text-primary transition-colors py-1"
+                  onClick={closeMobileMenu}
+                >
+                  {t.nav.testimonials}
+                </Link>
+                <Link
+                  href="#faq"
+                  className="text-sm font-medium hover:text-primary transition-colors py-1"
+                  onClick={closeMobileMenu}
+                >
+                  {t.nav.faq}
+                </Link>
+                <div className="pt-3 border-t space-y-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      router.push("/auth/login");
+                      closeMobileMenu();
+                    }}
+                    className="w-full justify-start text-xs"
+                  >
+                    <LogIn className="w-3 h-3 mr-2" />
+                    {t.auth.signIn}
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      router.push("/auth/register");
+                      closeMobileMenu();
+                    }}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-xs"
+                  >
+                    {t.auth.getStarted}
+                    <ArrowRight className="w-3 h-3 ml-1" />
+                  </Button>
+                </div>
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden pt-16">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-blue-950/20 dark:via-background dark:to-purple-950/20" />
         <div className="container mx-auto max-w-7xl px-6 py-20 md:py-32 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -206,7 +301,9 @@ export default function Home() {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
                   {t.home.hero.title}
                   <br />
-                  <AnimatedGradientText>{t.home.hero.titleHighlight}</AnimatedGradientText>
+                  <AnimatedGradientText>
+                    {t.home.hero.titleHighlight}
+                  </AnimatedGradientText>
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-md">
                   {t.home.hero.description}
@@ -224,7 +321,9 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">{t.home.hero.rating}</span>{" "}
+                  <span className="font-semibold text-foreground">
+                    {t.home.hero.rating}
+                  </span>{" "}
                   {t.home.hero.ratingText}
                 </div>
               </div>
@@ -314,102 +413,116 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 md:py-32 relative overflow-hidden">
+      <section
+        id="features"
+        className="py-20 md:py-32 relative overflow-hidden"
+      >
         {/* Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 dark:from-indigo-950/30 dark:via-blue-950/30 dark:to-cyan-950/30" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)] animate-pulse" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)] animate-pulse" style={{ animationDelay: '1s' }} />
-        
+        <div
+          className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)] animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+
         {/* Floating Geometric Shapes */}
         <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full animate-float" />
-        <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-lg rotate-45 animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute bottom-32 left-1/4 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full animate-float" style={{ animationDelay: '3s' }} />
-        
-        <div className="relative">
-          <div className="contain/*  */er mx-auto max-w-7xl px-6">
-          <div className="text-center space-y-4 mb-16">
-            <Badge variant="secondary" className="mx-auto">
-              {t.home.features.badge}
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">
-              {t.home.features.title}
-              <AnimatedGradientText>{t.home.features.titleHighlight}</AnimatedGradientText>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t.home.features.description}
-            </p>
-          </div>
+        <div
+          className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-lg rotate-45 animate-float"
+          style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute bottom-32 left-1/4 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full animate-float"
+          style={{ animationDelay: "3s" }}
+        />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Users,
-                title: t.home.features.customerCentric.title,
-                description: t.home.features.customerCentric.description,
-                color: "bg-blue-100 text-blue-600",
-              },
-              {
-                icon: Shirt,
-                title: t.home.features.qualityMaterials.title,
-                description: t.home.features.qualityMaterials.description,
-                color: "bg-purple-100 text-purple-600",
-              },
-              {
-                icon: Clock,
-                title: t.home.features.fastProduction.title,
-                description: t.home.features.fastProduction.description,
-                color: "bg-green-100 text-green-600",
-              },
-              {
-                icon: Shield,
-                title: t.home.features.qualityGuarantee.title,
-                description: t.home.features.qualityGuarantee.description,
-                color: "bg-orange-100 text-orange-600",
-              },
-              {
-                icon: MessageCircle,
-                title: t.home.features.realTimeUpdates.title,
-                description: t.home.features.realTimeUpdates.description,
-                color: "bg-pink-100 text-pink-600",
-              },
-              {
-                icon: Award,
-                title: t.home.features.professionalTeam.title,
-                description: t.home.features.professionalTeam.description,
-                color: "bg-indigo-100 text-indigo-600",
-              },
-            ].map((feature, index) => (
-              <Card
-                key={index}
-                className="group hover:shadow-lg transition-all duration-300 border-0 bg-white/50 backdrop-blur-sm"
-              >
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div
-                      className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
-                    >
-                      <feature.icon className="w-6 h-6" />
+        <div className="relative">
+          <div className="container mx-auto max-w-7xl px-4 md:px-6">
+            <div className="text-center space-y-4 mb-16">
+              <Badge variant="secondary" className="mx-auto">
+                {t.home.features.badge}
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold">
+                {t.home.features.title}
+                <AnimatedGradientText>
+                  {t.home.features.titleHighlight}
+                </AnimatedGradientText>
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {t.home.features.description}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: Users,
+                  title: t.home.features.customerCentric.title,
+                  description: t.home.features.customerCentric.description,
+                  color: "bg-blue-100 text-blue-600",
+                },
+                {
+                  icon: Shirt,
+                  title: t.home.features.qualityMaterials.title,
+                  description: t.home.features.qualityMaterials.description,
+                  color: "bg-purple-100 text-purple-600",
+                },
+                {
+                  icon: Clock,
+                  title: t.home.features.fastProduction.title,
+                  description: t.home.features.fastProduction.description,
+                  color: "bg-green-100 text-green-600",
+                },
+                {
+                  icon: Shield,
+                  title: t.home.features.qualityGuarantee.title,
+                  description: t.home.features.qualityGuarantee.description,
+                  color: "bg-orange-100 text-orange-600",
+                },
+                {
+                  icon: MessageCircle,
+                  title: t.home.features.realTimeUpdates.title,
+                  description: t.home.features.realTimeUpdates.description,
+                  color: "bg-pink-100 text-pink-600",
+                },
+                {
+                  icon: Award,
+                  title: t.home.features.professionalTeam.title,
+                  description: t.home.features.professionalTeam.description,
+                  color: "bg-indigo-100 text-indigo-600",
+                },
+              ].map((feature, index) => (
+                <Card
+                  key={index}
+                  className="group hover:shadow-lg transition-all duration-300 border-0 bg-white/50 backdrop-blur-sm"
+                >
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <div
+                        className={`w-12 h-12 rounded-lg ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                      >
+                        <feature.icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2">
+                          {feature.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {feature.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
         </div>
       </section>
 
       {/* About Section */}
       <section id="about" className="py-20 md:py-32">
-        <div className="container mx-auto max-w-7xl px-6">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <Image
@@ -426,7 +539,9 @@ export default function Home() {
                 {t.home.about.title}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   {" "}
-                  <AnimatedGradientText>{t.home.about.titleHighlight}</AnimatedGradientText>
+                  <AnimatedGradientText>
+                    {t.home.about.titleHighlight}
+                  </AnimatedGradientText>
                 </span>
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -477,14 +592,16 @@ export default function Home() {
 
       {/* Customer Testimonials Slider Section */}
       <section id="testimonials" className="py-20 md:py-32 bg-muted/30">
-        <div className="container mx-auto max-w-7xl px-6">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="secondary">{t.home.testimonials.badge}</Badge>
             <h2 className="text-3xl md:text-4xl font-bold">
               {t.home.testimonials.title}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {" "}
-                <AnimatedGradientText>{t.home.testimonials.titleHighlight}</AnimatedGradientText>
+                <AnimatedGradientText>
+                  {t.home.testimonials.titleHighlight}
+                </AnimatedGradientText>
               </span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -532,60 +649,71 @@ export default function Home() {
         {/* Background Similar to Features but with Blue Theme */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 dark:from-blue-950/20 dark:via-slate-950/20 dark:to-indigo-950/20" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(59,130,246,0.1),transparent_50%)] animate-pulse" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,rgba(99,102,241,0.1),transparent_50%)] animate-pulse" style={{ animationDelay: '1s' }} />
-        
+        <div
+          className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,rgba(99,102,241,0.1),transparent_50%)] animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+
         {/* Different Floating Geometric Shapes for FAQ */}
         <div className="absolute top-16 right-16 w-24 h-24 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-2xl rotate-12 animate-float" />
-        <div className="absolute top-1/3 left-12 w-16 h-16 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute bottom-20 right-1/3 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-xl rotate-45 animate-float" style={{ animationDelay: '3s' }} />
-        
-        <div className="relative">
-        <div className="container mx-auto max-w-4xl px-6">
-          <div className="text-center space-y-4 mb-16">
-            <Badge variant="secondary">{t.home.faq.badge}</Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">
-              {t.home.faq.title}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {" "}
-                <AnimatedGradientText>{t.home.faq.titleHighlight}</AnimatedGradientText>
-              </span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              {t.home.faq.description}
-            </p>
-          </div>
+        <div
+          className="absolute top-1/3 left-12 w-16 h-16 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full animate-float"
+          style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute bottom-20 right-1/3 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-xl rotate-45 animate-float"
+          style={{ animationDelay: "3s" }}
+        />
 
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <Card key={index} className="border-0 shadow-sm">
-                <CardContent className="p-0">
-                  <button
-                    onClick={() => toggleFaq(index)}
-                    className="w-full p-6 text-left flex items-center justify-between hover:bg-muted/30 transition-colors"
-                  >
-                    <span className="font-semibold">{faq.question}</span>
-                    {openFaq === index ? (
-                      <Minus className="w-5 h-5 text-muted-foreground" />
-                    ) : (
-                      <Plus className="w-5 h-5 text-muted-foreground" />
+        <div className="relative">
+          <div className="container mx-auto max-w-4xl px-4 md:px-6">
+            <div className="text-center space-y-4 mb-16">
+              <Badge variant="secondary">{t.home.faq.badge}</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold">
+                {t.home.faq.title}
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {" "}
+                  <AnimatedGradientText>
+                    {t.home.faq.titleHighlight}
+                  </AnimatedGradientText>
+                </span>
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                {t.home.faq.description}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <Card key={index} className="border-0 shadow-sm">
+                  <CardContent className="p-0">
+                    <button
+                      onClick={() => toggleFaq(index)}
+                      className="w-full p-6 text-left flex items-center justify-between hover:bg-muted/30 transition-colors"
+                    >
+                      <span className="font-semibold">{faq.question}</span>
+                      {openFaq === index ? (
+                        <Minus className="w-5 h-5 text-muted-foreground" />
+                      ) : (
+                        <Plus className="w-5 h-5 text-muted-foreground" />
+                      )}
+                    </button>
+                    {openFaq === index && (
+                      <div className="px-6 pb-6">
+                        <p className="text-muted-foreground">{faq.answer}</p>
+                      </div>
                     )}
-                  </button>
-                  {openFaq === index && (
-                    <div className="px-6 pb-6">
-                      <p className="text-muted-foreground">{faq.answer}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-20 md:py-32 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="container mx-auto max-w-4xl px-6 text-center">
+        <div className="container mx-auto max-w-4xl px-4 md:px-6 text-center">
           <div className="space-y-8 text-white">
             <h2 className="text-3xl md:text-4xl font-bold">
               {t.home.cta.title}
@@ -617,7 +745,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-12 bg-muted/50">
-        <div className="container mx-auto max-w-7xl px-6">
+        <div className="container mx-auto max-w-7xl px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">

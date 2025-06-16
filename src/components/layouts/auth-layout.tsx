@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useTranslation } from "@/lib/hooks/use-i18n";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -51,6 +53,7 @@ export default function AuthLayout({
   description,
 }: AuthLayoutProps) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -99,7 +102,7 @@ export default function AuthLayout({
           </div>
 
           {/* Content */}
-          <div className="relative z-20 flex items-center text-lg font-medium">
+          <div className="relative z-20 flex items-center justify-between text-lg font-medium">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-600 rounded-lg flex items-center justify-center">
                 <svg
@@ -124,6 +127,7 @@ export default function AuthLayout({
                 </AnimatedGradientText>
               </Link>
             </div>
+            <LanguageSwitcher variant="toggle" />
           </div>
 
           {/* Services Highlight */}
@@ -147,11 +151,10 @@ export default function AuthLayout({
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">
-                    Custom Design
+                    {t.authLayout.customDesign.title}
                   </h3>
                   <p className="text-sm text-blue-100 leading-relaxed">
-                    Desain custom sesuai kebutuhan brand Anda dengan konsultasi
-                    gratis dari tim ahli kami
+                    {t.authLayout.customDesign.description}
                   </p>
                 </div>
               </div>
@@ -176,11 +179,10 @@ export default function AuthLayout({
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">
-                    Quality Materials
+                    {t.authLayout.qualityMaterials.title}
                   </h3>
                   <p className="text-sm text-blue-100 leading-relaxed">
-                    Menggunakan bahan berkualitas premium dengan standar
-                    internasional untuk hasil terbaik
+                    {t.authLayout.qualityMaterials.description}
                   </p>
                 </div>
               </div>
@@ -205,11 +207,10 @@ export default function AuthLayout({
                 </div>
                 <div>
                   <h3 className="font-semibold text-white mb-1">
-                    Fast Production
+                    {t.authLayout.fastProduction.title}
                   </h3>
                   <p className="text-sm text-blue-100 leading-relaxed">
-                    Produksi cepat dengan teknologi modern dan sistem manajemen
-                    yang efisien
+                    {t.authLayout.fastProduction.description}
                   </p>
                 </div>
               </div>
@@ -223,19 +224,19 @@ export default function AuthLayout({
                 <div>
                   <div className="text-3xl font-bold text-white mb-1">500+</div>
                   <div className="text-xs text-blue-200 uppercase tracking-wider">
-                    Brand Partner
+                    {t.authLayout.stats.brandPartner}
                   </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white mb-1">50K+</div>
                   <div className="text-xs text-blue-200 uppercase tracking-wider">
-                    Produk Selesai
+                    {t.authLayout.stats.productsCompleted}
                   </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white mb-1">7+</div>
                   <div className="text-xs text-blue-200 uppercase tracking-wider">
-                    Tahun Pengalaman
+                    {t.authLayout.stats.yearsExperience}
                   </div>
                 </div>
               </div>
@@ -313,7 +314,7 @@ export default function AuthLayout({
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full max-w-[400px] space-y-6">
               {/* Mobile Header */}
-              <div className="flex items-center justify-center lg:hidden mb-8">
+              <div className="flex items-center justify-between lg:hidden mb-8">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                     <svg
@@ -333,6 +334,7 @@ export default function AuthLayout({
                     Rafsakaos
                   </Link>
                 </div>
+                <LanguageSwitcher variant="toggle" />
               </div>
 
               <div className="flex flex-col space-y-2 text-center">
@@ -348,19 +350,19 @@ export default function AuthLayout({
               </div>
 
               <p className="px-4 text-center text-xs text-muted-foreground">
-                By continuing, you agree to our{" "}
+                {t.authLayout.termsAndPrivacy}{" "}
                 <a
                   href="/terms"
                   className="underline underline-offset-4 hover:text-primary transition-colors"
                 >
-                  Terms of Service
+                  {t.authLayout.termsOfService}
                 </a>{" "}
-                and{" "}
+                {t.authLayout.and}{" "}
                 <a
                   href="/privacy"
                   className="underline underline-offset-4 hover:text-primary transition-colors"
                 >
-                  Privacy Policy
+                  {t.authLayout.privacyPolicy}
                 </a>
                 .
               </p>
