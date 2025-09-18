@@ -3,27 +3,27 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'fcmgvrxzteydktmfcqqa.supabase.co',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "gpwtcmqtnzmlilshufge.supabase.co",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'github.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "github.com",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'plus.unsplash.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+        pathname: "/**",
       },
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

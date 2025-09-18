@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { ColumnDef, Row } from "@tanstack/react-table"
 import { DataTable } from "@/components/ui/data-table"
 import { Card } from "@/components/ui/card"
@@ -14,9 +15,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import Image from "next/image"
-import { Package, CreditCard } from "lucide-react"
+import { Package, CreditCard, Eye, Archive } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useRouter } from "next/navigation"
+import { OrderDetailDialog } from "./order-detail-dialog"
 
 interface Order {
   id: string
@@ -46,6 +48,7 @@ interface OrdersDataTableProps {
   isLoading: boolean
   isAdmin?: boolean
   onStatusChange?: (orderId: string, newStatus: string) => void
+  onArchive?: (orderId: string) => void
   showActions?: boolean
 }
 
@@ -88,16 +91,30 @@ export function OrdersDataTable({
   isLoading,
   isAdmin,
   onStatusChange,
+  onArchive,
   showActions
 }: OrdersDataTableProps) {
   const router = useRouter();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showOrderDetail, setShowOrderDetail] = useState(false);
+
+  const handleRowClick = (order: Order) => {
+    setSelectedOrder(order);
+    setShowOrderDetail(true);
+  };
 
   const baseColumns: ColumnDef<Order>[] = [
     {
       accessorKey: "id",
       header: "Order ID",
       cell: ({ row }: { row: Row<Order> }) => (
-        <span className="font-medium">{row.original.id.slice(0, 8)}</span>
+        <Button
+          variant="ghost"
+          className="h-auto p-0 font-medium text-primary hover:underline"
+          onClick={() => handleRowClick(row.original)}
+        >
+          #{row.original.id.slice(0, 8)}
+        </Button>
       ),
     },
     ...(isAdmin
@@ -209,31 +226,53 @@ export function OrdersDataTable({
     id: "actions",
     header: "Actions",
     cell: ({ row }) => (
-      <div className="min-w-[140px]">
-        <Select
-          value={row.original.status}
-          onValueChange={(value) => onStatusChange?.(row.original.id, value)}
-          disabled={row.original.status === "selesai"}
+      <div className="min-w-[140px] space-y-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => handleRowClick(row.original)}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Update status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="menunggu_pembayaran">
-              Pending Payment
-            </SelectItem>
-            <SelectItem value="diproses">Processing</SelectItem>
-            <SelectItem value="produksi">In Production</SelectItem>
-            <SelectItem value="selesai">Completed</SelectItem>
-          </SelectContent>
-        </Select>
+          <Eye className="mr-1 h-3 w-3" />
+          View Details
+        </Button>
+        {isAdmin && onStatusChange && (
+          <Select
+            value={row.original.status}
+            onValueChange={(value) => onStatusChange(row.original.id, value)}
+            disabled={row.original.status === "selesai"}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Update status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="menunggu_pembayaran">
+                Pending Payment
+              </SelectItem>
+              <SelectItem value="diproses">Processing</SelectItem>
+              <SelectItem value="produksi">In Production</SelectItem>
+              <SelectItem value="selesai">Completed</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+        {isAdmin && onArchive && row.original.status === "selesai" && (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onClick={() => onArchive(row.original.id)}
+          >
+            <Archive className="mr-1 h-3 w-3" />
+            Archive
+          </Button>
+        )}
       </div>
     ),
   }
 
-  const columns = showActions 
+  const columns = showActions
     ? [...baseColumns, actionColumn]
-    : baseColumns
+    : [...baseColumns, actionColumn] // Always show actions column for view details
 
   if (isLoading) {
     return (
@@ -256,10 +295,19 @@ export function OrdersDataTable({
   }
 
   return (
-    <Card className="max-w-[calc(100vw-3rem)]">
-      <div className="p-6">
-        <DataTable columns={columns} data={orders} />
-      </div>
-    </Card>
+    <>
+      <Card className="max-w-[calc(100vw-3rem)]">
+        <div className="p-6">
+          <DataTable columns={columns} data={orders} />
+        </div>
+      </Card>
+
+      <OrderDetailDialog
+        order={selectedOrder}
+        open={showOrderDetail}
+        onOpenChange={setShowOrderDetail}
+        isAdmin={isAdmin}
+      />
+    </>
   )
 }

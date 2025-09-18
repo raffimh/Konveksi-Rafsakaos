@@ -1,17 +1,16 @@
-import { Metadata } from "next";
+"use client";
+
 import AuthLayout from "@/components/layouts/auth-layout";
 import { RegisterForm } from "@/components/auth/register-form";
-
-export const metadata: Metadata = {
-  title: "Create Account - Rafsakaos Konveksi",
-  description: "Create an account to get started",
-};
+import { useTranslation } from "@/lib/hooks/use-i18n";
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
+
   return (
     <AuthLayout
-      title="Create an account"
-      description="Enter your information to create an account"
+      title={t.auth.joinFamily}
+      description={t.auth.startJourney}
     >
       <RegisterForm />
     </AuthLayout>

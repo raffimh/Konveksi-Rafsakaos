@@ -197,8 +197,8 @@ export default function CustomerMaterialsPage() {
                   {formatCurrency(calculateTotal())}
                 </p>
               </div>
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                 size="lg"
                 disabled={!selectedMaterial || !isQuantityValid}
                 onClick={handleCreateOrder}

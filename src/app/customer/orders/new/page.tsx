@@ -101,7 +101,7 @@ export default function NewOrderPage() {
         } = await supabase.auth.getUser();
         if (!user) throw new Error("Not authenticated");
 
-        const activeOrders = await getActiveOrdersCount(supabase);
+        const activeOrders = await getActiveOrdersCount(supabase, user.id);
         const estimate = estimateProductionTime({
           newOrderQuantity: quantity,
           activeOrdersCount: activeOrders,
@@ -345,7 +345,11 @@ export default function NewOrderPage() {
                 </CardContent>
               </Card>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                disabled={isLoading}
+              >
                 {isLoading ? "Creating Order..." : "Create Order"}
               </Button>
             </form>

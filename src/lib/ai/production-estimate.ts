@@ -31,21 +31,16 @@ export function estimateProductionTime({ newOrderQuantity, activeOrdersCount }: 
 }
 
 export async function getActiveOrdersCount(
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient<Database>,
+  customerId: string
 ): Promise<number> {
-  // Get all orders that are still in processing (not completed)
   const { data: orders } = await supabase
     .from("orders")
     .select("status")
-    .in("status", ["menunggu_pembayaran", "diproses", "produksi"]);
+    .match({
+      status: "produksi",
+      customer_id: customerId
+    });
 
   return orders?.length || 0;
-}
-
-export async function calculateProductionEstimate(
-  supabase: SupabaseClient<Database>,
-  newOrderQuantity: number
-): Promise<number> {
-  const activeOrdersCount = await getActiveOrdersCount(supabase);
-  return estimateProductionTime({ newOrderQuantity, activeOrdersCount });
 }

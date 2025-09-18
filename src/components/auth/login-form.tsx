@@ -18,10 +18,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const supabase = createClient();
 
   const form = useForm<LoginSchema>({
@@ -88,7 +90,22 @@ export function LoginForm() {
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <div className="flex items-center justify-center space-x-2 mb-4">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center animate-pulse">
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Welcome Back
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Sign in to continue to your account
+        </p>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -96,54 +113,115 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-sm font-medium flex items-center space-x-2">
+                  <Mail className="w-4 h-4" />
+                  <span>Email Address</span>
+                </FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="name@example.com"
-                    type="email"
-                    {...field}
-                  />
+                  <div className="relative">
+                    <Input
+                      placeholder="Enter your email"
+                      type="email"
+                      className="pl-10 h-12 bg-white/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200"
+                      {...field}
+                    />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-sm font-medium flex items-center space-x-2">
+                  <Lock className="w-4 h-4" />
+                  <span>Password</span>
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="••••••••" type="password" {...field} />
+                  <div className="relative">
+                    <Input
+                      placeholder="Enter your password"
+                      type={showPassword ? "text" : "password"}
+                      className="pl-10 pr-10 h-12 bg-white/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200"
+                      {...field}
+                    />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign In"}
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <input
+                id="remember"
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                htmlFor="remember"
+                className="text-sm text-muted-foreground"
+              >
+                Remember me
+              </label>
+            </div>
+            <Link
+              href="/auth/reset-password"
+              className="text-sm text-blue-600 hover:text-blue-500 font-medium transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <span>Sign In</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            )}
           </Button>
         </form>
       </Form>
-      <div className="text-sm text-center space-y-2">
-        <Link
-          href="/auth/reset-password"
-          className="text-sm text-muted-foreground hover:text-primary"
-        >
-          Forgot password?
-        </Link>
-      </div>
-      <div className="text-sm text-center">
-        <span className="text-muted-foreground">
-          Don&apos;t have an account?
-        </span>{" "}
-        <Link
-          href="/auth/register"
-          className="text-sm text-muted-foreground hover:text-primary"
-        >
-          Sign up
-        </Link>
+
+      {/* Sign Up Link */}
+      <div className="text-center">
+        <p className="text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/auth/register"
+            className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+          >
+            Create one now
+          </Link>
+        </p>
       </div>
     </div>
   );

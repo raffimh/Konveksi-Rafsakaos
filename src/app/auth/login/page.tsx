@@ -1,17 +1,16 @@
-import { Metadata } from "next";
+"use client";
+
 import AuthLayout from "@/components/layouts/auth-layout";
 import { LoginForm } from "@/components/auth/login-form";
-
-export const metadata: Metadata = {
-  title: "Sign In - Rafsakaos Konveksi",
-  description: "Sign in to your account",
-};
+import { useTranslation } from "@/lib/hooks/use-i18n";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
+
   return (
     <AuthLayout
-      title="Sign in to your account"
-      description="Enter your email and password to sign in"
+      title={t.auth.welcomeBack}
+      description={t.auth.signIn}
     >
       <LoginForm />
     </AuthLayout>

@@ -2,6 +2,9 @@ import "@/app/globals.css";
 import { Inter } from "next/font/google";
 import { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
+import { ProgressBar } from "@/components/ui/progress-bar";
+import { I18nProvider } from "@/lib/hooks/use-i18n";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,10 +30,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <main>{children}</main>
-        <Toaster />
+        <I18nProvider>
+          <Suspense fallback={null}>
+            <ProgressBar />
+          </Suspense>
+          <main>{children}</main>
+          <Toaster />
+        </I18nProvider>
       </body>
     </html>
   );
